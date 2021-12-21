@@ -3,18 +3,21 @@ pragma solidity ^0.8.4;
 
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
+import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/ReentrancyGuard.sol";
+import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
 contract marketPlaceBoilerPlate is ReentrancyGuard {
     using Counters for Counters.Counter;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
+
     
-     address public owner;
-     
-     constructor() {
-         owner = msg.sender;
-     }
+    address public owner;
+    address erc20Contract = 0xb91c05cf30A973a58295C8Db9248D0911CF091E5; // VALOU
+
+
+     constructor() {}
      
      struct MarketItem {
          uint itemId;
@@ -85,19 +88,19 @@ contract marketPlaceBoilerPlate is ReentrancyGuard {
             uint price = idToMarketItem[itemId].price;
             uint tokenId = idToMarketItem[itemId].tokenId;
             bool sold = idToMarketItem[itemId].sold;
-            require(msg.value == price, "Please submit the asking price in order to complete the purchase");
-            require(sold != true, "This Sale has alredy finnished");
+            require(IERC20(erc20Contract).allowance(msg.sender, address(this)) >= price, "Allowance problem: not enough fund allowed to buy this nft");
+            require(IERC20(erc20Contract).transferFrom(msg.sender, idToMarketItem[itemId].seller, price), "Problem while transferring ERC20 tokens");
+            require(sold != true, "This Sale has already finished");
             emit MarketItemSold(
                 itemId,
                 msg.sender
                 );
 
-            idToMarketItem[itemId].seller.transfer(msg.value);
             IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
             idToMarketItem[itemId].owner = payable(msg.sender);
             _itemsSold.increment();
             idToMarketItem[itemId].sold = true;
-        }
+}
         
     function fetchMarketItems() public view returns (MarketItem[] memory) {
         uint itemCount = _itemIds.current();
@@ -115,7 +118,10 @@ contract marketPlaceBoilerPlate is ReentrancyGuard {
         }
         return items;
     }
-      
+
+    function setERC20Contract(address _erc20Contract) external onlyOwner {
+    erc20Contract = _erc20Contract;
+    }
 }
 
-/// Thanks for inspiration: https://github.com/dabit3/polygon-ethereum-nextjs-marketplace/
+
