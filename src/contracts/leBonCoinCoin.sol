@@ -7,7 +7,7 @@ import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/tok
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/ReentrancyGuard.sol";
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
-contract marketPlaceBoilerPlate is ReentrancyGuard {
+contract leBonCoinCoin is ReentrancyGuard {
     using Counters for Counters.Counter;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
@@ -28,6 +28,8 @@ contract marketPlaceBoilerPlate is ReentrancyGuard {
          uint256 price;
          bool sold;
      }
+
+  
      
      mapping(uint256 => MarketItem) private idToMarketItem;
      
@@ -120,5 +122,3 @@ contract marketPlaceBoilerPlate is ReentrancyGuard {
     }
 
 }
-
-
