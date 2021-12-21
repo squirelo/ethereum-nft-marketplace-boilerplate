@@ -119,9 +119,6 @@ contract marketPlaceBoilerPlate is ReentrancyGuard {
         return items;
     }
 
-    function setERC20Contract(address _erc20Contract) external onlyOwner {
-    erc20Contract = _erc20Contract;
-    }
 }
 
 
