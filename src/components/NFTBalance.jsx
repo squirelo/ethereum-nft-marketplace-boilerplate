@@ -219,10 +219,10 @@ function NFTBalance() {
             Cancel
           </Button>,
           <Button onClick={() => approveAll(nftToSend)} type="primary">
-            Approve
+            1-Deleguer le nft
           </Button>,
           <Button onClick={() => list(nftToSend, price)} type="primary">
-            List
+            2-Mettre en vente
           </Button>
         ]}
       >
@@ -238,7 +238,7 @@ function NFTBalance() {
           />
           <Input
             autoFocus
-            placeholder="Listing Price in MATIC"
+            placeholder="Prix de vente en $VALOU"
             onChange={(e) => setPrice(e.target.value)}
           />
         </Spin>
